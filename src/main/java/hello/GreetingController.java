@@ -15,17 +15,18 @@ public class GreetingController {
 
     @GetMapping("/timeout")
     public DeferredResult<ResponseEntity<?>> timeout(@RequestParam(name="waitTime") final long waitTime) {
-        return createDeferredResultWithTimeoutAndWaitTime(waitTime, 1000L);
+        return createDeferredResultWithTimeoutAndWaitTime(waitTime, null);
     }
 
     @PostMapping("/timeout")
     public DeferredResult<ResponseEntity<?>> timeoutPost(@RequestBody final long waitTime) {
-        return createDeferredResultWithTimeoutAndWaitTime(waitTime, 1000L);
+        return createDeferredResultWithTimeoutAndWaitTime(waitTime, null);
     }
 
     private DeferredResult<ResponseEntity<?>> createDeferredResultWithTimeoutAndWaitTime(
-            @RequestParam(name = "waitTime") long waitTime, long timeoutAfter) {
-        final DeferredResult<ResponseEntity<?>> responseEntityDeferredResult = new DeferredResult<>(timeoutAfter);
+            @RequestParam(name = "waitTime") long waitTime, Long timeoutAfter) {
+        final DeferredResult<ResponseEntity<?>> responseEntityDeferredResult =
+                timeoutAfter != null ? new DeferredResult<>(timeoutAfter) : new DeferredResult<>();
         CompletableFuture.runAsync(() -> {
             if (waitTime > 0) {
                 try {
